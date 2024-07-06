@@ -1,11 +1,11 @@
-# react-native-razorpay
+# react-native-dhanyatra
 
 [![npm](https://img.shields.io/npm/l/express.svg)]()
-[![NPM Version](http://img.shields.io/npm/v/react-native-razorpay.svg?style=flat)](https://www.npmjs.com/package/react-native-dhanyatra)
-[![NPM Downloads](https://img.shields.io/npm/dm/react-native-razorpay.svg?style=flat)](https://npmcharts.com/compare/react-native-dhanyatra?minimal=true)
-[![install size](https://packagephobia.com/badge?p=react-native-razorpay@2.1.35)](https://packagephobia.com/result?p=react-native-dhanyatra@1.0)
+[![NPM Version](http://img.shields.io/npm/v/react-native-dhanyatra.svg?style=flat)](https://www.npmjs.com/package/react-native-dhanyatra)
+[![NPM Downloads](https://img.shields.io/npm/dm/react-native-dhanyatra.svg?style=flat)](https://npmcharts.com/compare/react-native-dhanyatra?minimal=true)
+[![install size](https://packagephobia.com/badge?p=react-native-dhanyatra@2.1.35)](https://packagephobia.com/result?p=react-native-dhanyatra@1.0)
 
-[![NPM](https://nodei.co/npm/react-native-dhanyatra.png?downloads=true)](https://nodei.co/npm/react-native-razorpay/)
+[![NPM](https://nodei.co/npm/react-native-dhanyatra.png?downloads=true)](https://nodei.co/npm/react-native-dhanyatra/)
 
 React Native wrapper around our Android and iOS mobile SDKs
 
