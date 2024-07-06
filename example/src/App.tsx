@@ -32,7 +32,7 @@ const App: () => Node = () => {
           }}
         >
           <Button
-            title={'Pay with Razorpay'}
+            title={'Pay with Dhanyatra'}
             onPress={() => {
               var options = {
                 key: '', //Key here
