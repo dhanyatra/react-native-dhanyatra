@@ -1,6 +1,6 @@
 {
   "name": "react-native-dhanyatra",
-  "version": "1.0",
+  "version": "1.0.0",
   "description": "React Native wrapper for Dhanyatra",
   "source": "./src/index.tsx",
   "main": "./lib/commonjs/index.cjs",
