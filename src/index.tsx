@@ -1,4 +1,7 @@
 import { NativeEventEmitter, NativeModules } from 'react-native';
+import type { PaymentOptions } from './PaymentOption';
+export type { PaymentOptions } from './PaymentOption';
+
 const dhanyatraEvents = new NativeEventEmitter(
   NativeModules.DhanyatraEventEmitter
 );
@@ -9,7 +12,11 @@ const removeSubscriptions = () => {
 };
 
 class DhanyatraCheckout {
-  static open(options: any, successCallback?: any, errorCallback?: any) {
+  static open(
+    options: PaymentOptions,
+    successCallback?: any,
+    errorCallback?: any
+  ) {
     return new Promise(function (resolve, reject) {
       dhanyatraEvents.addListener('Dhanyatra::PAYMENT_SUCCESS', (data) => {
         let resolveFn = successCallback || resolve;

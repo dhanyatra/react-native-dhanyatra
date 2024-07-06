@@ -38,7 +38,8 @@ public fun convertToPaymentOptions(options: ReadableMap): PaymentOptions {
             user_id = it.getString("user_id") ?: "",
             org_id = it.getString("org_id") ?: "",
             mode = it.getString("mode") ?: "",
-            pay_complete = it.getBoolean("pay_complete")
+            amount = it.getString("amount") ?: "",
+            pay_complete = it.hasKey("pay_complete") && it.getBoolean("pay_complete")
         )
     }
 

@@ -8,7 +8,7 @@ import {
   StatusBar,
   useColorScheme,
 } from 'react-native';
-import DhanyatraCheckout from 'react-native-dhanyatra';
+import DhanyatraCheckout, { type PaymentOptions } from 'react-native-dhanyatra';
 import { Colors, Header } from 'react-native/Libraries/NewAppScreen';
 
 const App: () => Node = () => {
@@ -34,8 +34,8 @@ const App: () => Node = () => {
           <Button
             title={'Pay with Dhanyatra'}
             onPress={() => {
-              var options = {
-                key: '', //Key here
+              var options: PaymentOptions = {
+                key: 'Mg.EXfuJYaDVQxmnPfh7PQqc58yEK0Ib70XX92qU7T51qg1vUzilbHQNNMMWrla', //Key here
                 currency: 'INR',
                 amount: '400',
                 config: {
@@ -65,6 +65,13 @@ const App: () => Node = () => {
                     text: '#ffa800',
                     base: '#ffa800',
                   },
+                },
+                ark: {
+                  user_id: '4437',
+                  org_id: '8',
+                  mode: 'ark_app',
+
+                  pay_complete: false,
                 },
               };
               DhanyatraCheckout.open(options)
