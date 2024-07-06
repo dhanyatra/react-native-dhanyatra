@@ -1,30 +1,87 @@
-import { useState, useEffect } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
-import { multiply } from 'react-native-dhanyatra';
+import type { Node } from '@babel/core';
+import {} from 'react';
+import {
+  View,
+  Button,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  useColorScheme,
+} from 'react-native';
+import DhanyatraCheckout from 'react-native-dhanyatra';
+import { Colors, Header } from 'react-native/Libraries/NewAppScreen';
 
-export default function App() {
-  const [result, setResult] = useState<number | undefined>();
+const App: () => Node = () => {
+  const isDarkMode = useColorScheme() === 'dark';
 
-  useEffect(() => {
-    multiply(3, 7).then(setResult);
-  }, []);
+  const backgroundStyle = {
+    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  };
 
   return (
-    <View style={styles.container}>
-      <Text>Result: {result}</Text>
-    </View>
+    <SafeAreaView style={backgroundStyle}>
+      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        style={backgroundStyle}
+      >
+        <Header />
+        <View
+          style={{
+            backgroundColor: isDarkMode ? Colors.black : Colors.white,
+          }}
+        >
+          <Button
+            title={'Pay with Razorpay'}
+            onPress={() => {
+              var options = {
+                key: '', //Key here
+                currency: 'INR',
+                amount: '400',
+                config: {
+                  display: {
+                    blocks: [
+                      {
+                        preferred: {
+                          name: 'Preferred Payment',
+                          instruments: [
+                            {
+                              method: 'upi',
+                              flows: ['qr', 'intent'],
+                              apps: ['phonepe', 'google_pay', 'paytm'],
+                            },
+                          ],
+                        },
+                      },
+                    ],
+                    sequence: ['block.preferred'],
+                    preferences: {
+                      show_default_blocks: true, // Should Checkout show its default blocks?
+                    },
+                  },
+                },
+                theme: {
+                  color: {
+                    text: '#ffa800',
+                    base: '#ffa800',
+                  },
+                },
+              };
+              DhanyatraCheckout.open(options)
+                .then((data) => {
+                  // handle success
+                  console.log('success ::', data);
+                })
+                .catch((error) => {
+                  // handle failure
+                  console.log('error ::', error);
+                });
+            }}
+          />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  box: {
-    width: 60,
-    height: 60,
-    marginVertical: 20,
-  },
-});
+export default App;

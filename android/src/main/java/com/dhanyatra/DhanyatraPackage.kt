@@ -1,4 +1,4 @@
-package com.dhanyatra
+package com.dhanyatra.rn
 
 import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.NativeModule

@@ -1,22 +1,29 @@
-import { NativeModules, Platform } from 'react-native';
+import { NativeEventEmitter, NativeModules } from 'react-native';
+const dhanyatraEvents = new NativeEventEmitter(
+  NativeModules.DhanyatraEventEmitter
+);
 
-const LINKING_ERROR =
-  `The package 'react-native-dhanyatra' doesn't seem to be linked. Make sure: \n\n` +
-  Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
-  '- You rebuilt the app after installing the package\n' +
-  '- You are not using Expo Go\n';
+const removeSubscriptions = () => {
+  dhanyatraEvents.removeAllListeners('Dhanyatra::PAYMENT_SUCCESS');
+  dhanyatraEvents.removeAllListeners('Dhanyatra::PAYMENT_ERROR');
+};
 
-const Dhanyatra = NativeModules.Dhanyatra
-  ? NativeModules.Dhanyatra
-  : new Proxy(
-      {},
-      {
-        get() {
-          throw new Error(LINKING_ERROR);
-        },
-      }
-    );
-
-export function multiply(a: number, b: number): Promise<number> {
-  return Dhanyatra.multiply(a, b);
+class DhanyatraCheckout {
+  static open(options: any, successCallback?: any, errorCallback?: any) {
+    return new Promise(function (resolve, reject) {
+      dhanyatraEvents.addListener('Dhanyatra::PAYMENT_SUCCESS', (data) => {
+        let resolveFn = successCallback || resolve;
+        resolveFn(data);
+        removeSubscriptions();
+      });
+      dhanyatraEvents.addListener('Dhanyatra::PAYMENT_ERROR', (data) => {
+        let rejectFn = errorCallback || reject;
+        rejectFn(data);
+        removeSubscriptions();
+      });
+      NativeModules.RNDhanyatraCheckout.startPayment(options);
+    });
+  }
 }
+
+export default DhanyatraCheckout;
