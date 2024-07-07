@@ -42,19 +42,21 @@ class DhanyatraModule(reactContext: ReactApplicationContext) :
     }
 
   override fun onPaymentSuccess(dhanyatraPaymentId: String?, paymentData: PaymentSuccessData) {
-        val params = Arguments.createMap()
-        params.putString("status", "success")
-        params.putString("paymentId", dhanyatraPaymentId)
-        params.putMap("data", Arguments.createMap()) // Add paymentData details
+        val params = Arguments.createMap().apply {
+          putString("status", "success")
+          putString("paymentId", dhanyatraPaymentId)
+          putMap("data", jsonToWritableMap(paymentData))
+        }
         sendEvent("Dhanyatra::PAYMENT_SUCCESS", params)
         paymentSDK?.close()
     }
 
     override fun onPaymentError(dhanyatraPaymentId: String?, response: PaymentFailureData?) {
-        val params = Arguments.createMap()
-        params.putString("status", "error")
-        params.putString("paymentId", dhanyatraPaymentId)
-        params.putMap("data", Arguments.createMap()) // Add response details
+        val params = Arguments.createMap().apply {
+          putString("status", "error")
+          putString("paymentId", dhanyatraPaymentId)
+          response?.let { putMap("data", jsonToWritableMap(it)) }
+        }
         sendEvent("Dhanyatra::PAYMENT_ERROR", params)
         paymentSDK?.close()
     }

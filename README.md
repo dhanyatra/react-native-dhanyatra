@@ -177,14 +177,14 @@ link iOS SDK as explained in the previous section:
    import DhanyatraCheckout from 'react-native-dhanyatra';
    ```
 
-2. Call `DhanyatraCheckout.startPayment` method with the payment `options`. The method
+2. Call `DhanyatraCheckout.open` method with the payment `options`. The method
    returns a **JS Promise** where `then` part corresponds to a successful payment
    and the `catch` part corresponds to payment failure.
    ```js
    <TouchableHighlight onPress={() => {
    var options = {
     description: 'Credits towards consultation',
-    image: 'https://i.imgur.com/3g7nmJC.png',
+    image: '',
     currency: 'INR',
     key: '', // Your api key
     amount: '5000',

@@ -1,7 +1,12 @@
 package com.dhanyatra.rn
 
+import android.os.Parcelable
 import com.facebook.react.bridge.*
 import com.dhanyatra.checkout.*
+import kotlin.reflect.full.memberProperties
+import kotlin.reflect.full.declaredMemberProperties
+import org.json.JSONArray
+import org.json.JSONObject
 
 public fun convertToPaymentOptions(options: ReadableMap): PaymentOptions {
     val key = options.getString("key") ?: ""
@@ -57,7 +62,7 @@ private fun convertBlocks(blocksArray: ReadableArray): List<Block> {
 
     for (i in 0 until blocksArray.size()) {
         val blockMap = blocksArray.getMap(i)
-        val preferredMap = blockMap?.getMap("preferred")
+        val preferredMap = blockMap.getMap("preferred")
 
         val instrumentsArray = preferredMap?.getArray("instruments")
         val instruments = instrumentsArray?.let { convertInstruments(it) } ?: emptyList()
@@ -82,14 +87,14 @@ private fun convertInstruments(instrumentsArray: ReadableArray): List<Instrument
     for (i in 0 until instrumentsArray.size()) {
         val instrumentMap = instrumentsArray.getMap(i)
 
-        val flowsArray = instrumentMap?.getArray("flows")
+        val flowsArray = instrumentMap.getArray("flows")
         val flows = flowsArray?.toArrayList()?.map { it as String } ?: emptyList()
 
-        val appsArray = instrumentMap?.getArray("apps")
+        val appsArray = instrumentMap.getArray("apps")
         val apps = appsArray?.toArrayList()?.map { it as String } ?: emptyList()
 
         val instrument = Instrument(
-            method = instrumentMap?.getString("method") ?: "",
+            method = instrumentMap.getString("method") ?: "",
             flows = flows,
             apps = apps
         )
@@ -97,4 +102,82 @@ private fun convertInstruments(instrumentsArray: ReadableArray): List<Instrument
     }
 
     return instruments
+}
+
+public fun jsonToWritableMap(data: Any): WritableMap {
+    val writableMap = WritableNativeMap()
+
+    // Iterate through declared fields
+    data::class.java.declaredFields.forEach { field ->
+        field.isAccessible = true
+        val name = field.name
+        val value = field.get(data)
+
+        // Skip 'CREATOR' field
+        if (name == "CREATOR") {
+            return@forEach
+        }
+
+        // Check if value is null
+        if (value == null) {
+            writableMap.putNull(name)
+            return@forEach
+        }
+
+        // Handle Parcelable objects
+        if (value is Parcelable) {
+            writableMap.putMap(name, jsonToWritableMap(value))
+            return@forEach
+        }
+
+        // Handle primitive types and strings
+        when (value) {
+            is String -> writableMap.putString(name, value)
+            is Int -> writableMap.putInt(name, value)
+            is Double -> writableMap.putDouble(name, value)
+            is Float -> writableMap.putDouble(name, value.toDouble())
+            is Boolean -> writableMap.putBoolean(name, value)
+            is Long -> writableMap.putDouble(name, value.toDouble())
+
+            // Handle nested JSONObject
+            is JSONObject -> {
+                try {
+                    val jsonMap = jsonToWritableMap(value)
+                    writableMap.putMap(name, jsonMap)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+
+            // Handle other cases
+            else -> {
+                try {
+                    writableMap.putString(name, value.toString())
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+    }
+
+    return writableMap
+}
+
+private fun jsonToWritableArray(data: List<*>): WritableArray {
+    val writableArray = WritableNativeArray()
+    data.forEach { value ->
+        when (value) {
+            is String -> writableArray.pushString(value)
+            is Int -> writableArray.pushInt(value)
+            is Double -> writableArray.pushDouble(value)
+            is Float -> writableArray.pushDouble(value.toDouble())
+            is Boolean -> writableArray.pushBoolean(value)
+            is Long -> writableArray.pushDouble(value.toDouble())
+            is Parcelable -> writableArray.pushMap(jsonToWritableMap(value))
+            is JSONObject -> writableArray.pushMap(jsonToWritableMap(value))
+            null -> writableArray.pushNull()
+            else -> throw IllegalArgumentException("Unsupported type: ${value?.javaClass?.name}")
+        }
+    }
+    return writableArray
 }
